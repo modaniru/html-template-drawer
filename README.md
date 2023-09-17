@@ -37,4 +37,4 @@ docker run -p 80:80 image-name
 * internal - go files
 * cmd - contains main.go file
 * static - contains static files (images, css styles, js files, fonts, etc.)
-* template - contains html files or folders with html files
+* template - contains folders which contains html files
