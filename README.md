@@ -8,13 +8,13 @@
 ### Статические файлы
 Стили, картинки, скрипты, шрифты находятся в папке static. Они могут быть подключены к любым html файлам. Н.р. first.html может подключить себе static/style/second/style.css
 ### Роутинг html страниц
-Для того, чтобы страница была доступна, нужно отредактировать internal/router.go. Можно редактировать следующий строчки в методе GetRouter()
+Для того, чтобы страница была доступна, нужно отредактировать internal/router.go. Можно редактировать следующие строчки в методе GetRouter()
 ~~~go
-    // routing
-	r.router.GET("/first", r.LoadHtmlPage("first.html")) // будет доступен по localhost/first, выдаст страничку first.html
-	r.router.GET("/second", r.LoadHtmlPage("second.html"))
-	// located in template/third/third.html but we must write just a file name
-	r.router.GET("/third", r.LoadHtmlPage("third.html"))
+// routing
+r.router.GET("/first", r.LoadHtmlPage("first.html")) // будет доступен по localhost/first, выдаст страничку first.html
+r.router.GET("/second", r.LoadHtmlPage("second.html"))
+// located in template/third/third.html but we must write just a file name
+r.router.GET("/third", r.LoadHtmlPage("third.html"))
 ~~~
 Важно то, что в методе LoadHtmlPage мы вводим не относительный путь до файла, а ЕГО название
 ## Локальный запуск
