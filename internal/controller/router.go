@@ -15,7 +15,7 @@ func NewRouter(router *gin.Engine) *Router {
 
 func (r *Router) GetRouter() *gin.Engine {
 	// load html files
-	r.router.LoadHTMLGlob("template/*")
+	r.router.LoadHTMLGlob("template/**/*")
 	// load static files
 	r.router.Static("/static", "static")
 	// log middleware
@@ -23,6 +23,7 @@ func (r *Router) GetRouter() *gin.Engine {
 	// routing
 	r.router.GET("/first", r.LoadHtmlPage("first.html"))
 	r.router.GET("/second", r.LoadHtmlPage("second.html"))
+	// located in template/third/third.html but we must write just a file name
 	r.router.GET("/third", r.LoadHtmlPage("third.html"))
 	return r.router
 }
