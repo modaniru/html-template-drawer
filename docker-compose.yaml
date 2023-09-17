@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  html-template:
+    build: .
+    restart: always
+  caddy:
+    image: "caddy:latest"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on: 
+      - html-template
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    restart: always
