@@ -4,6 +4,8 @@ services:
   html-template:
     build: .
     restart: always
+    depends_on:
+      - postgres
   caddy:
     image: "caddy:latest"
     ports:
@@ -14,3 +16,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
     restart: always
+  postgres:
+    image: "postgres:latest"
+    environment:
+      - POSTGRES_PASSWORD=postgres

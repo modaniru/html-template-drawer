@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"html/template"
 
 	"github.com/gin-gonic/gin"
@@ -27,17 +28,21 @@ func (r *Router) GetRouter() *gin.Engine {
 	r.router.LoadHTMLGlob("resources/template/articles/*")
 	// load css files
 	r.router.Static("css", "./resources/css")
+	// TODO localhost/?id=go_course
 	// log middleware
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	// routing
 	r.router.GET("/", r.mainPage)
+	r.router.GET("/articles", r.LoadHtmlPage())
 
 	return r.router
 }
 
-func (r *Router) LoadHtmlPage(name string) gin.HandlerFunc {
+func (r *Router) LoadHtmlPage() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(200, name, nil)
+		page := c.Query("id")
+		fmt.Println(page)
+		c.HTML(200, page+".html", nil)
 	}
 }
 

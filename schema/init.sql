@@ -1,9 +1,3 @@
-create table author (
-    name varchar,
-    image_link varchar
-);
-insert into author (name, image_link) value ("modaniru", "link");
-
 create table Courses (
     id uuid DEFAULT uuid_generate_v4 (),
     title varchar
@@ -14,3 +8,6 @@ create table Articles (
     name varchar unique,
     course_id uuid REFERENCES Courses (id)
 );
+
+insert into Courses (title) values ("Golang course");
+insert into Articles (name, course_id) values ("go_course_cycle", (select id from Courses where title = "go_course_cycle";));
