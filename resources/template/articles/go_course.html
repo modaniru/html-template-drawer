@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>В Go меняется фундаментальная вещь — цикл</h1>
+    <br>
+    <span>Если раньше в циклах были проблемы с замыканиями, так как переменная цикла имела скоуп всего цикла, а не одной его итерации, то в 1.22 это поведение поменяют.
+
+
+        проще показать на примере:
+        
+        
+         funcs := []func(){}
+        
+         for i := 0; i < 5; i++ {
+          funcs = append(funcs, func() {
+           fmt.Println(i)
+          })
+         }
+        
+         funcs[0]()
+        
+        Последняя строка примера напечатает 5 в go 1.21, но в go 1.22 будет уже интуитивно понятный 0.
+        
+        
+        С одной стороны, это нарушение обратной совместимости, но зато не надо писать пугающее новичков i := i для починки скоупа.
+        
+        
+        На самом деле, сложно представить кейс, чтобы кто-то хотел во все функции замкнуть именно последнее значение цикла. В тоже время такая неинтуитивная ситуация, как сейчас, регулярно выстреливает в ногу, вот пример реального бага в Lets Encrypt:
+        
+        
+        // authz2ModelMapToPB converts a mapping of domain name to authz2Models into a
+        // protobuf authorizations map
+        func authz2ModelMapToPB(m map[string]authz2Model) (*sapb.Authorizations, error) {
+            resp := &sapb.Authorizations{}
+            for k, v := range m {
+                // Make a copy of k because it will be reassigned with each loop.
+                kCopy := k
+                authzPB, err := modelToAuthzPB(&v)
+                if err != nil {
+                    return nil, err
+                }
+                resp.Authz = append(resp.Authz, &sapb.Authorizations_MapElement{
+                    Domain: &kCopy,
+                    Authz: authzPB,
+                })
+            }
+            return resp, nil
+        }
+        
+        Здесь разработчик скопировал переменную k, а вот v — уже забыл. В итоге функция modelToAuthzPB получила указатели на одну и ту же переменную.
+        
+        
+        Новое поведение языка Go можно включить уже в 1.21 с помощью переменной окружения GOEXPERIMENT=loopvar и протестировать вашу программу. В любом случае, переход с 1.21 на 1.22 надо будет делать осторожно, возможно у вас что-то сломается. А может, наоборот, заработает (смайлик).
+        
+        
+        Если хотите больше новостей и полезной информации о разработке, подписывайтесь на мой tg-канал Cross Join
+        
+        </span>
+</body>
+</html>
