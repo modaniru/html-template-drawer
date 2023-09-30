@@ -5,6 +5,8 @@ type Article struct {
 }
 
 type Course struct {
-	Id    string
-	Title string
+	Id            string
+	Title         string
+	Image         string
+	ArticlesCount int
 }

@@ -29,22 +29,26 @@ func NewStorage(db *sql.DB) *Storage {
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	create table if not exists Courses (
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
+		image varchar,
 		title varchar
 	);
 
 	create table if not exists Articles (
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
-		name varchar unique,
+		name varchar,
 		course_id uuid REFERENCES Courses (id)
 	);
 
-	insert into Courses (title) values ('Golang course');
-	insert into Courses (title) values ('Python course');
-	insert into Courses (title) values ('Java course');
-	insert into Courses (title) values ('Kotlin course');
+	insert into Courses (title, image) values ('Golang course', 'https://go.dev/blog/go-brand/Go-Logo/PNG/Go-Logo_Blue.png');
+	insert into Courses (title, image) values ('Python course', 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/1869px-Python-logo-notext.svg.png');
+	insert into Courses (title, image) values ('Java course', 'https://static.vecteezy.com/system/resources/previews/022/101/050/original/java-logo-transparent-free-png.png');
+	insert into Courses (title, image) values ('Kotlin course', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kotlin_Icon.svg/2048px-Kotlin_Icon.svg.png');
 
 
 	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Golang course'));
+	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Python course'));
+	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Java course'));
+	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Kotlin course'));
 	`)
 	if err != nil {
 		log.Fatal(err.Error())

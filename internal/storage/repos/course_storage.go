@@ -17,7 +17,7 @@ func NewCourseStorage(db *sql.DB) *courseStorage {
 
 // TODO pagination??
 func (c *courseStorage) GetAllCourses(ctx context.Context) ([]entity.Course, error) {
-	rows, err := c.db.QueryContext(ctx, "select id, title from Courses;")
+	rows, err := c.db.QueryContext(ctx, "select c.id, c.title, c.image, count(c.title) from Courses as c inner join Articles as a on c.id::uuid = a.course_id::uuid group by c.id;")
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (c *courseStorage) GetAllCourses(ctx context.Context) ([]entity.Course, err
 	res := []entity.Course{}
 	for rows.Next() {
 		course := entity.Course{}
-		err := rows.Scan(&course.Id, &course.Title)
+		err := rows.Scan(&course.Id, &course.Title, &course.Image, &course.ArticlesCount)
 		if err != nil {
 			return nil, err
 		}

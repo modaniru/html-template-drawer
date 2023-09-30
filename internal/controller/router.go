@@ -35,9 +35,10 @@ func (r *Router) GetRouter() *gin.Engine {
 	// log middleware
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	// routing
-	r.router.GET("/", r.mainPage)
-	r.router.GET("/articles", r.LoadHtmlPage())
-	r.router.GET("/courses", r.ListOfCourses)
+	// r.router.GET("/", r.mainPage)
+	r.router.GET("/article", r.LoadHtmlPage())
+	r.router.GET("/course", r.ListOfCourseArticles)
+	r.router.GET("/", r.ListOfCourses)
 
 	return r.router
 }
@@ -55,11 +56,30 @@ func (r *Router) mainPage(c *gin.Context) {
 	mainPage.Execute(c.Writer, nil)
 }
 
+func (r *Router) ListOfCourseArticles(c *gin.Context) {
+	courseId := c.Query("id")
+	fmt.Println(courseId)
+	if courseId == "" {
+		// TODO 404
+		c.Abort()
+		return
+	}
+	list, err := r.storage.Articles.GetCourseArticles(c, courseId)
+	if err != nil {
+		// TODO error
+		fmt.Println(err.Error())
+		c.Abort()
+		return
+	}
+	fmt.Println(list)
+	c.JSON(200, list)
+}
+
 func (r *Router) ListOfCourses(c *gin.Context) {
 	list, err := r.storage.Courses.GetAllCourses(c)
 	fmt.Println(list)
 	if err != nil {
-		c.Abort()
+		c.JSON(400, err)
 		return
 	}
 	coursesPage.Execute(c.Writer, list)

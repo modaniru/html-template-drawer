@@ -1,0 +1,20 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+.line{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.course-img{
+    width: 40px;
+    height: 40px;
+    background-color: white;
+
+}
+.title{
+    margin-left: 20px;
+}
+.articles{
+    margin-left: 20px;
+}
