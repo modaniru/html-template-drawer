@@ -1,7 +1,8 @@
 package entity
 
 type Article struct {
-	Name string
+	TemplateName string
+	Title        string
 }
 
 type Course struct {

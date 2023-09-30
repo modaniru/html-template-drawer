@@ -19,8 +19,9 @@ func NewRouter(router *gin.Engine, storage *storage.Storage) *Router {
 }
 
 var (
-	mainPage    = template.Must(template.ParseFiles("resources/template/home.html"))
-	coursesPage = template.Must(template.ParseFiles("resources/template/courses.html"))
+	mainPage           = template.Must(template.ParseFiles("resources/template/home.html"))
+	coursesPage        = template.Must(template.ParseFiles("resources/template/courses.html"))
+	courseArticlesPage = template.Must(template.ParseFiles("resources/template/articles.html"))
 )
 
 func (r *Router) GetRouter() *gin.Engine {
@@ -72,7 +73,7 @@ func (r *Router) ListOfCourseArticles(c *gin.Context) {
 		return
 	}
 	fmt.Println(list)
-	c.JSON(200, list)
+	courseArticlesPage.Execute(c.Writer, list)
 }
 
 func (r *Router) ListOfCourses(c *gin.Context) {

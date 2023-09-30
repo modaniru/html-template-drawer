@@ -35,7 +35,8 @@ func NewStorage(db *sql.DB) *Storage {
 
 	create table if not exists Articles (
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
-		name varchar,
+		template_name varchar,
+		title varchar,
 		course_id uuid REFERENCES Courses (id)
 	);
 
@@ -45,10 +46,10 @@ func NewStorage(db *sql.DB) *Storage {
 	insert into Courses (title, image) values ('Kotlin course', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Kotlin_Icon.svg/2048px-Kotlin_Icon.svg.png');
 
 
-	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Golang course'));
-	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Python course'));
-	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Java course'));
-	insert into Articles (name, course_id) values ('go_course_cycle', (select id from Courses where title = 'Kotlin course'));
+	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Golang course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Python course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Java course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Kotlin course'), 'gos cycles');
 	`)
 	if err != nil {
 		log.Fatal(err.Error())
