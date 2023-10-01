@@ -15,6 +15,7 @@ type Articles interface {
 
 type Courses interface {
 	GetAllCourses(ctx context.Context) ([]entity.Course, error)
+	SaveCourse(ctx context.Context, course entity.CourseForm) (string, error)
 }
 
 type Storage struct {
@@ -47,9 +48,10 @@ func NewStorage(db *sql.DB) *Storage {
 
 
 	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Golang course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_context', (select id from Courses where title = 'Golang course'), 'gos context');
 	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Python course'), 'gos cycles');
-	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Java course'), 'gos cycles');
-	insert into Articles (template_name, course_id, title) values ('go_course_cycle', (select id from Courses where title = 'Kotlin course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_context', (select id from Courses where title = 'Java course'), 'gos cycles');
+	insert into Articles (template_name, course_id, title) values ('go_course_context', (select id from Courses where title = 'Kotlin course'), 'gos cycles');
 	`)
 	if err != nil {
 		log.Fatal(err.Error())

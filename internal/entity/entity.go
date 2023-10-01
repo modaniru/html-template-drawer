@@ -11,3 +11,8 @@ type Course struct {
 	Image         string
 	ArticlesCount int
 }
+
+type CourseForm struct {
+	Name  string
+	Image string
+}

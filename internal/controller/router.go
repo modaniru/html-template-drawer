@@ -3,9 +3,11 @@ package controller
 import (
 	"fmt"
 	"html/template"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/modaniru/html-template-drawer/internal/controller/middleware"
+	"github.com/modaniru/html-template-drawer/internal/entity"
 	"github.com/modaniru/html-template-drawer/internal/storage"
 )
 
@@ -22,6 +24,7 @@ var (
 	mainPage           = template.Must(template.ParseFiles("resources/template/home.html"))
 	coursesPage        = template.Must(template.ParseFiles("resources/template/courses.html"))
 	courseArticlesPage = template.Must(template.ParseFiles("resources/template/articles.html"))
+	courseForm         = template.Must(template.ParseFiles("resources/template/course_form.html"))
 )
 
 func (r *Router) GetRouter() *gin.Engine {
@@ -40,8 +43,26 @@ func (r *Router) GetRouter() *gin.Engine {
 	r.router.GET("/article", r.LoadHtmlPage())
 	r.router.GET("/course", r.ListOfCourseArticles)
 	r.router.GET("/", r.ListOfCourses)
+	r.router.GET("/course/create", r.CourseFormPage)
+	r.router.POST("/course", r.SubmitCourse)
 
 	return r.router
+}
+
+func (r *Router) CourseFormPage(c *gin.Context) {
+	courseForm.Execute(c.Writer, nil)
+}
+
+func (r *Router) SubmitCourse(c *gin.Context) {
+	imageLink := c.PostForm("image")
+	if _, err := url.ParseRequestURI(imageLink); err != nil {
+		c.JSON(400, err.Error())
+	}
+	id, err := r.storage.Courses.SaveCourse(c, entity.CourseForm{Name: c.PostForm("name"), Image: imageLink})
+	if err != nil {
+		c.JSON(400, err.Error())
+	}
+	c.JSON(200, "success: "+id)
 }
 
 func (r *Router) LoadHtmlPage() gin.HandlerFunc {
