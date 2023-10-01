@@ -2,10 +2,12 @@ package controller
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/modaniru/html-template-drawer/internal/entity"
+	"github.com/modaniru/html-template-drawer/pkg"
 )
 
 func (r *Router) courseForm(c *gin.Context) {
@@ -15,11 +17,13 @@ func (r *Router) courseForm(c *gin.Context) {
 func (r *Router) courseFormSubmit(c *gin.Context) {
 	imageLink := c.PostForm("image")
 	if _, err := url.ParseRequestURI(imageLink); err != nil {
-		c.JSON(400, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	id, err := r.service.CourseService.SaveCourse(c, entity.CourseForm{Name: c.PostForm("name"), Image: imageLink})
 	if err != nil {
-		c.JSON(400, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	c.JSON(200, "success: "+id)
 }
@@ -27,10 +31,13 @@ func (r *Router) courseFormSubmit(c *gin.Context) {
 func (r *Router) articleForm(c *gin.Context) {
 	courses, err := r.service.CourseService.GetAllCourses(c)
 	if err != nil {
-		c.JSON(400, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	articleForm.Execute(c.Writer, courses)
+	articleForm.Execute(c.Writer, map[string]any{
+		"courses": courses,
+		"files":   pkg.GetAllArticlesFiles(),
+	})
 }
 
 func (r *Router) articleFormSubmit(c *gin.Context) {
@@ -40,7 +47,8 @@ func (r *Router) articleFormSubmit(c *gin.Context) {
 		CourseId:     c.PostForm("course"),
 	})
 	if err != nil {
-		c.JSON(400, err.Error())
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	c.JSON(200, "success")
 }
@@ -62,15 +70,12 @@ func (r *Router) courseArticles(c *gin.Context) {
 	courseId := c.Query("id")
 	fmt.Println(courseId)
 	if courseId == "" {
-		// TODO 404
-		c.Abort()
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("course id not present"))
 		return
 	}
 	list, err := r.service.ArticleService.GetCourseArticles(c, courseId)
 	if err != nil {
-		// TODO error
-		fmt.Println(err.Error())
-		c.Abort()
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	fmt.Println(list)
@@ -81,7 +86,7 @@ func (r *Router) coursesList(c *gin.Context) {
 	list, err := r.service.CourseService.GetAllCourses(c)
 	fmt.Println(list)
 	if err != nil {
-		c.JSON(400, err)
+		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 	coursesPage.Execute(c.Writer, list)

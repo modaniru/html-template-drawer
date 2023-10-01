@@ -36,6 +36,7 @@ func (r *Router) GetRouter() *gin.Engine {
 	// TODO localhost/?id=go_course
 	// log middleware
 	r.router.Use(middleware.JsonLoggerMiddleware())
+	r.router.Use(middleware.ErrorHandler)
 	// routing
 	// r.router.GET("/", r.mainPage)
 	r.router.GET("/article", r.loadHtmlPageById())
