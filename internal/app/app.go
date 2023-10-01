@@ -15,7 +15,7 @@ import (
 func Run() {
 	configureLogger()
 	configureDotEnv()
-	db, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5555/postgres?sslmode=disable")
+	db, err := sql.Open("postgres", os.Getenv("DB_SOURCE"))
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(1)
