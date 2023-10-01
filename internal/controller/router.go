@@ -33,17 +33,20 @@ func (r *Router) GetRouter() *gin.Engine {
 	r.router.LoadHTMLGlob("resources/template/articles/*")
 	// load css files
 	r.router.Static("css", "./resources/css")
+	r.router.Static("img", "./resources/img")
+	r.router.Static("js", "./resources/js")
+	r.router.Static("fonts", "./resources/fonts")
 	// TODO localhost/?id=go_course
 	// log middleware
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	r.router.Use(middleware.ErrorHandler)
 	// routing
-	// r.router.GET("/", r.mainPage)
+	r.router.GET("/", r.mainPage)
 	r.router.GET("/article", r.loadHtmlPageById())
 	r.router.GET("/article/create", r.articleForm)
 	r.router.POST("/article", r.articleFormSubmit)
 	r.router.GET("/course", r.courseArticles)
-	r.router.GET("/", r.coursesList)
+	r.router.GET("/list", r.coursesList)
 	r.router.GET("/course/create", r.courseForm)
 	r.router.POST("/course", r.courseFormSubmit)
 
