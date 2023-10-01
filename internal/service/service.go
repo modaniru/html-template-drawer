@@ -8,24 +8,25 @@ import (
 	"github.com/modaniru/html-template-drawer/internal/storage"
 )
 
-type CourseService interface{
+type CourseService interface {
 	GetAllCourses(ctx context.Context) ([]entity.Course, error)
 	SaveCourse(ctx context.Context, course entity.CourseForm) (string, error)
 }
 
-type ArticleService interface{
+type ArticleService interface {
 	GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error)
 	SaveArticle(ctx context.Context, article entity.ArticleForm) error
 }
 
-type Service struct{
+type Service struct {
 	CourseService
 	ArticleService
 }
 
-//Create all services
-func CreateService(storage storage.Storage) *Service{
+// Create all services
+func CreateService(storage *storage.Storage) *Service {
 	return &Service{
 		ArticleService: services.NewArticleService(storage),
+		CourseService:  services.NewCourseService(storage),
 	}
 }

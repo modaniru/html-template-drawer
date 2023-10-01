@@ -21,21 +21,11 @@ type Courses interface {
 }
 
 type Storage struct {
-	Articles Articles
-	Courses  Courses
+	Articles
+	Courses
 }
 
-//GetCourseArticles implements Articles.
-func (Storage) GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error) {
-	panic("unimplemented")
-}
-
-//SaveArticle implements Articles.
-func (Storage) SaveArticle(ctx context.Context, article entity.ArticleForm) error {
-	panic("unimplemented")
-}
-
-//Create all storages
+// Create all storages
 func NewStorage(db *sql.DB) *Storage {
 	_, err := db.Exec(`
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
