@@ -25,6 +25,7 @@ var (
 	coursesPage        = template.Must(template.ParseFiles("resources/template/courses.html"))
 	courseArticlesPage = template.Must(template.ParseFiles("resources/template/articles.html"))
 	courseForm         = template.Must(template.ParseFiles("resources/template/course_form.html"))
+	articleForm        = template.Must(template.ParseFiles("resources/template/article_form.html"))
 )
 
 func (r *Router) GetRouter() *gin.Engine {
@@ -41,6 +42,8 @@ func (r *Router) GetRouter() *gin.Engine {
 	// routing
 	// r.router.GET("/", r.mainPage)
 	r.router.GET("/article", r.LoadHtmlPage())
+	r.router.GET("/article/create", r.ArticleFromPage)
+	r.router.POST("/article", r.SubmitArticle)
 	r.router.GET("/course", r.ListOfCourseArticles)
 	r.router.GET("/", r.ListOfCourses)
 	r.router.GET("/course/create", r.CourseFormPage)
@@ -63,6 +66,27 @@ func (r *Router) SubmitCourse(c *gin.Context) {
 		c.JSON(400, err.Error())
 	}
 	c.JSON(200, "success: "+id)
+}
+
+func (r *Router) ArticleFromPage(c *gin.Context) {
+	courses, err := r.storage.Courses.GetAllCourses(c)
+	if err != nil {
+		c.JSON(400, err.Error())
+		return
+	}
+	articleForm.Execute(c.Writer, courses)
+}
+
+func (r *Router) SubmitArticle(c *gin.Context) {
+	err := r.storage.Articles.SaveArticle(c, entity.ArticleForm{
+		Title:        c.PostForm("title"),
+		TemplateName: c.PostForm("name"),
+		CourseId:     c.PostForm("course"),
+	})
+	if err != nil {
+		c.JSON(400, err.Error())
+	}
+	c.JSON(200, "success")
 }
 
 func (r *Router) LoadHtmlPage() gin.HandlerFunc {

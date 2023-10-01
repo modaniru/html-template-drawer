@@ -33,3 +33,8 @@ func (a *articleStorage) GetCourseArticles(ctx context.Context, courseId string)
 	}
 	return res, nil
 }
+
+func (a *articleStorage) SaveArticle(ctx context.Context, article entity.ArticleForm) error {
+	_, err := a.db.Exec("insert into Articles (template_name, title, course_id) values ($1, $2, $3::uuid);", article.TemplateName, article.Title, article.CourseId)
+	return err
+}

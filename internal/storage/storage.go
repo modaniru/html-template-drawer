@@ -11,6 +11,7 @@ import (
 
 type Articles interface {
 	GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error)
+	SaveArticle(ctx context.Context, article entity.ArticleForm) error
 }
 
 type Courses interface {

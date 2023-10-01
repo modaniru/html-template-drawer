@@ -16,3 +16,9 @@ type CourseForm struct {
 	Name  string
 	Image string
 }
+
+type ArticleForm struct {
+	Title        string
+	TemplateName string
+	CourseId     string
+}
