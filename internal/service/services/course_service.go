@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/modaniru/html-template-drawer/internal/entity"
 	"github.com/modaniru/html-template-drawer/internal/storage"
@@ -27,9 +28,15 @@ func (c *CourseService) GetAllCourses(ctx context.Context) ([]entity.Course, err
 
 // Save course
 func (c *CourseService) SaveCourse(ctx context.Context, course entity.CourseForm) (string, error) {
-	courseId, err := c.courseStorage.SaveCourse(ctx, course)
+	courseId, err := c.courseStorage.SaveCourse(ctx, &entity.SaveCourse{Title: course.Name, TitleId: toTitleId(course.Name), Image: course.Image})
 	if err != nil {
 		return "", fmt.Errorf("save course error: %w", err)
 	}
 	return courseId, nil
+}
+
+func toTitleId(title string) string {
+	result := strings.ToLower(title)
+	result = strings.ReplaceAll(result, " ", "_")
+	return result
 }

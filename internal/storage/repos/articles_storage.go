@@ -18,7 +18,7 @@ func NewArticleStorage(db *sql.DB) *articleStorage {
 
 // Return course articles
 func (a *articleStorage) GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error) {
-	rows, err := a.db.QueryContext(ctx, "select template_name, title  from Articles where course_id::uuid = $1::uuid;", courseId)
+	rows, err := a.db.QueryContext(ctx, "select template_name, title  from Articles where course_id::uuid = (select id from Courses where title_id = $1);", courseId)
 	if err != nil {
 		return nil, fmt.Errorf("execute query error: %w", err)
 	}

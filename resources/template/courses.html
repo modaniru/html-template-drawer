@@ -13,7 +13,7 @@
     <ul>
         {{ range $val := . }}
         <li class="line">
-            <a href="course/?id={{$val.Id}}" class="course_link line">
+            <a href="course/?id={{$val.TitleId}}" class="course_link line">
                 <img class="course-img" src="{{ $val.Image }}" alt="img">
                 <span class="title">{{$val.Title}}</span>
                 

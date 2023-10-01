@@ -70,7 +70,7 @@ func (r *Router) courseArticles(c *gin.Context) {
 	courseId := c.Query("id")
 	fmt.Println(courseId)
 	if courseId == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("course id not present"))
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("course id is not present"))
 		return
 	}
 	list, err := r.service.ArticleService.GetCourseArticles(c, courseId)

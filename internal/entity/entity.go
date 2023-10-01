@@ -8,6 +8,7 @@ type Article struct {
 type Course struct {
 	Id            string
 	Title         string
+	TitleId       string
 	Image         string
 	ArticlesCount int
 }
@@ -15,6 +16,12 @@ type Course struct {
 type CourseForm struct {
 	Name  string
 	Image string
+}
+
+type SaveCourse struct {
+	Title   string
+	Image   string
+	TitleId string
 }
 
 type ArticleForm struct {

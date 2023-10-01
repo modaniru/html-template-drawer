@@ -17,7 +17,7 @@ type Articles interface {
 
 type Courses interface {
 	GetAllCourses(ctx context.Context) ([]entity.Course, error)
-	SaveCourse(ctx context.Context, course entity.CourseForm) (string, error)
+	SaveCourse(ctx context.Context, course *entity.SaveCourse) (string, error)
 }
 
 type Storage struct {
@@ -28,11 +28,15 @@ type Storage struct {
 // Create all storages
 func NewStorage(db *sql.DB) *Storage {
 	_, err := db.Exec(`
+	DROP TABLE Articles;
+	DROP TABLE Courses;
+	
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	create table if not exists Courses (
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
 		image varchar,
-		title varchar unique
+		title varchar unique,
+		title_id varchar unique
 	);
 
 	create table if not exists Articles (
