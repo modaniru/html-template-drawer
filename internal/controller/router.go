@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"html/template"
-
 	"github.com/gin-gonic/gin"
 	"github.com/modaniru/html-template-drawer/internal/controller/middleware"
 	"github.com/modaniru/html-template-drawer/internal/service"
@@ -17,26 +15,14 @@ func NewRouter(router *gin.Engine, service *service.Service) *Router {
 	return &Router{router: router, service: service}
 }
 
-var (
-	mainPage           = template.Must(template.ParseFiles("resources/template/home.html"))
-	coursesPage        = template.Must(template.ParseFiles("resources/template/courses.html"))
-	courseArticlesPage = template.Must(template.ParseFiles("resources/template/articles.html"))
-	courseForm         = template.Must(template.ParseFiles("resources/template/course_form.html"))
-	articleForm        = template.Must(template.ParseFiles("resources/template/article_form.html"))
-)
-
 func (r *Router) GetRouter() *gin.Engine {
 	// load html files
-	// r.router.LoadHTMLGlob("template/**/*")
-
-	// load articles
-	r.router.LoadHTMLGlob("resources/template/articles/*")
+	r.router.LoadHTMLGlob("resources/template/*/*.html")
 	// load css files
 	r.router.Static("css", "./resources/css")
 	r.router.Static("img", "./resources/img")
 	r.router.Static("js", "./resources/js")
 	r.router.Static("fonts", "./resources/fonts")
-	// TODO localhost/?id=go_course
 	// log middleware
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	r.router.Use(middleware.ErrorHandler)

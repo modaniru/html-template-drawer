@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/modaniru/html-template-drawer/internal/entity"
@@ -11,7 +12,7 @@ import (
 )
 
 func (r *Router) courseForm(c *gin.Context) {
-	courseForm.Execute(c.Writer, nil)
+	c.HTML(200, "s_course_form.html", nil)
 }
 
 func (r *Router) courseFormSubmit(c *gin.Context) {
@@ -34,7 +35,7 @@ func (r *Router) articleForm(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	articleForm.Execute(c.Writer, map[string]any{
+	c.HTML(200, "s_article_form.html", map[string]any{
 		"courses": courses,
 		"files":   pkg.GetAllArticlesFiles(),
 	})
@@ -56,14 +57,25 @@ func (r *Router) articleFormSubmit(c *gin.Context) {
 func (r *Router) loadHtmlPageById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		page := c.Query("id")
-		fmt.Println(page)
-		c.HTML(200, page+".html", nil)
+		if strings.HasPrefix(page, "s_") {
+			c.AbortWithError(404, fmt.Errorf("error was not found"))
+			return
+		}
+		articles := pkg.GetAllArticlesFiles()
+		for _, a := range articles {
+			fmt.Println(a, page)
+			if a == page {
+				c.HTML(200, page + ".html", nil)
+				return
+			}
+		}
+		c.AbortWithError(404, fmt.Errorf("error was not found"))
 	}
 }
 
 // This page must return list of course
 func (r *Router) mainPage(c *gin.Context) {
-	mainPage.Execute(c.Writer, nil)
+	c.HTML(200, "s_home.html", nil)
 }
 
 func (r *Router) courseArticles(c *gin.Context) {
@@ -78,8 +90,7 @@ func (r *Router) courseArticles(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	fmt.Println(list)
-	courseArticlesPage.Execute(c.Writer, list)
+	c.HTML(200, "s_articles.html", list)
 }
 
 func (r *Router) coursesList(c *gin.Context) {
@@ -89,5 +100,5 @@ func (r *Router) coursesList(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	coursesPage.Execute(c.Writer, list)
+	c.HTML(200, "s_courses.html", list)
 }

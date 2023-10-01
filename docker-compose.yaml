@@ -6,6 +6,8 @@ services:
     restart: always
     depends_on:
       - postgres
+    volumes:
+      - ./resources:/app/resources
   caddy:
     image: "caddy:latest"
     ports:
