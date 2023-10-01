@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Форматирование текста на C++ старым и новым способом</h1>
+    <br>
+    <span>Форматирование текста на C++ можно реализовать несколькими способами:
+
+        потоками ввода-вывода. В частности, через std::stringstream с помощью потоковых операций (таких как operator <<);
+        функциями printf, в частности sprintf;
+        с помощью библиотеки форматирования C++20, в частности std::format / std::format_to;
+        с помощью сторонней библиотеки, в частности {fmt} (основа новой стандартной библиотеки форматирования).
+        
+        Первые два варианта представляют старые способы. Библиотека форматирования, очевидно, является новым. Но какой из них лучше в плане производительности? Это я и решил выяснить.
+        
+        ▍ Примеры
+        
+        Для начала разберём простые примеры форматирования текста. Предположим, нам нужно отформатировать текст в виде "severity=1,error=42,reason=access denied". Это можно сделать так:
+        
+        • с помощью потоков:
+        
+        int severity = 1;
+        unsigned error = 42;
+        reason = "access denied";
+        
+        std::stringstream ss;
+        ss << "severity=" << severity
+           << ",error=" << error
+           << ",reason=" << reason;
+        
+        std::string text = ss.str();
+        
+        • с помощью printf:
+        
+        int severity = 1;
+        unsigned error = 42;
+        reason = "access denied";
+        
+        std::string text(50, '\0');
+        sprintf(text.data(), "severity=%d,error=%u,reason=%s", severity, error, reason);
+        
+        • с помощью format:
+        
+        int severity = 1;
+        unsigned error = 42;
+        reason = "access denied";
+        
+        std::string text = std::format("severity={},error={},reason={}", severity, error, reason);
+        
+        // либо
+        
+        std::string text;
+        std::format_to(std::back_inserter(text), "severity={},error={},reason={}", severity, error, reason);
+        
+        Вариант с std::format во многом похож на printf, хотя здесь вам не нужно указывать спецификаторы типов, такие как %d, %u, %s, только плейсхолдер аргумента {}. Естественно, спецификаторы типов доступны, и о них можно почитать тут, но эта тема не относится к сути статьи.
+        
+        Вариант с std::format_to полезен для добавления текста, поскольку производит запись в выходной буфер через итератор. Это позволяет нам присоединять текст условно, как в примере ниже, где reason записывается в сообщение, только если содержит что-либо:
+        
+        std::string text = std::format("severity={},error={}", severity, error);
+        
+        if(!reason.empty())
+          std::format_to(std::back_inserter(text), ",reason=", reason);
+        
+        
+        ▍ Сравнение производительности
+        
+        При всех этих вариантах возникает вопрос, а какой из них лучше? Как правило, потоковые операции медленные, в то время как {fmt} — отличается высокой скоростью. Но не все случаи равнозначны, и обычно, когда вы хотите внести оптимизацию, то должны оценить ситуацию, а не опираться на общее понимание.
+        
+        Недавно я задал себе этот вопрос, когда заметил в своём текущем проекте обширное использование std::stringstream для форматирования сообщений журнала. В большинстве случаев там присутствует от одного до трёх аргументов. Вот пример:
+        
+        std::stringstream ss;
+        ss << "component id: " << id;
+        
+        std::string msg = ss.str();
+        
+        // либо
+        
+        std::stringstream ss;
+        ss << "source: " << source << "|code=" << code;
+        
+        std::string msg = ss.str();</span>
+</body>
+</html>

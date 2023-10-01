@@ -28,9 +28,6 @@ type Storage struct {
 // Create all storages
 func NewStorage(db *sql.DB) *Storage {
 	_, err := db.Exec(`
-	DROP TABLE Articles;
-	DROP TABLE Courses;
-	
 	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	create table if not exists Courses (
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
