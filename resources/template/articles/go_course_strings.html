@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Длина строк</h1>
+    <br>
+    <span>
+        Допустим, вы разрабатываете на Python и у вас есть такой код:
+
+data = u'♥'  
+print(len(data)) # выводит: 1  
+
+Если преобразовать его в аналогичный код на Go, то результат может вас удивить.
+
+package main
+
+import "fmt"
+
+func main() {  
+    data := "♥"
+    fmt.Println(len(data)) // выводит: 3
+}
+
+Встроенная функция len() возвращает не символ, а количество байт, как это происходит с Unicode-строками в Python.
+
+Чтобы получить такой же результат в Go, используйте функцию RuneCountInString() из пакета unicode/utf8.
+
+package main
+
+import (  
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {  
+    data := "♥"
+    fmt.Println(utf8.RuneCountInString(data)) // выводит: 1
+
+Технически функция RuneCountInString() не возвращает количество символов, потому что один символ может занимать несколько рун.
+
+package main
+
+import (  
+    "fmt"
+    "unicode/utf8"
+)
+
+func main() {  
+    data := "é"
+    fmt.Println(len(data))                    // выводит: 3
+    fmt.Println(utf8.RuneCountInString(data)) // выводит: 2
+}
+    </span>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="/article" method="post">
+        <label for="1">Title</label>
+        <input type="text" name="title" id="1">
+        <label for="2">File name</label>
+        <select name="name" id="2">
+            <option disabled>file name</option>
+            {{ range $val := .files  }}
+            <option value="{{$val}}">{{$val}}</option>
+            {{ end }}
+        </select>
+        <label for="3">Course</label>
+        <select name="course" id="3">
+            <option disabled>course</option>
+            {{ range $val := .courses  }}
+            <option value="{{$val.Id}}">{{$val.Title}}</option>
+            {{ end }}
+        </select>
+        <input type="submit" value="save">
+    </form>
+</body>
+</html>
