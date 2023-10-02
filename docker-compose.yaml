@@ -8,7 +8,7 @@ services:
       - postgres
     environment:
       - SECRET=${SECRET}
-      - DB_SOURSE=${DB_SOURCE}
+      - DB_SOURCE=${DB_SOURCE}
     volumes:
       - ./resources:/app/resources
   caddy:
