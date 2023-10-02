@@ -21,8 +21,8 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./site:/srv
-      - caddy_data:/data
-      - caddy_config:/config
+      - ./caddy_data:/data
+      - ./caddy_config:/config
     restart: always
   postgres:
     image: "postgres:latest"
@@ -30,7 +30,3 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-volumes:
-  caddy_data:
-    external: true
-  caddy_config:
