@@ -19,6 +19,7 @@ func (r *Router) GetRouter() *gin.Engine {
 	// load html files
 	r.router.LoadHTMLGlob("resources/template/*/*.html")
 	// load css files
+
 	r.router.Static("css", "./resources/css")
 	r.router.Static("img", "./resources/img")
 	r.router.Static("js", "./resources/js")
@@ -27,14 +28,15 @@ func (r *Router) GetRouter() *gin.Engine {
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	r.router.Use(middleware.ErrorHandler)
 	// routing
+	g := r.router.Group("/", middleware.Permission)
 	r.router.GET("/", r.mainPage)
 	r.router.GET("/article", r.loadHtmlPageById())
-	r.router.GET("/article/create", r.articleForm)
-	r.router.POST("/article", r.articleFormSubmit)
+	g.GET("/article/create", r.articleForm)
+	g.POST("/article", r.articleFormSubmit)
 	r.router.GET("/course", r.courseArticles)
 	r.router.GET("/list", r.coursesList)
-	r.router.GET("/course/create", r.courseForm)
-	r.router.POST("/course", r.courseFormSubmit)
+	g.GET("/course/create", r.courseForm)
+	g.POST("/course", r.courseFormSubmit)
 
 	return r.router
 }

@@ -12,7 +12,9 @@ import (
 )
 
 func (r *Router) courseForm(c *gin.Context) {
-	c.HTML(200, "s_course_form.html", nil)
+	c.HTML(200, "s_course_form.html", map[string]any{
+		"key": c.Query("key"),
+	})
 }
 
 func (r *Router) courseFormSubmit(c *gin.Context) {
@@ -38,6 +40,7 @@ func (r *Router) articleForm(c *gin.Context) {
 	c.HTML(200, "s_article_form.html", map[string]any{
 		"courses": courses,
 		"files":   pkg.GetAllArticlesFiles(),
+		"key":     c.Query("key"),
 	})
 }
 
@@ -65,7 +68,7 @@ func (r *Router) loadHtmlPageById() gin.HandlerFunc {
 		for _, a := range articles {
 			fmt.Println(a, page)
 			if a == page {
-				c.HTML(200, page + ".html", nil)
+				c.HTML(200, page+".html", nil)
 				return
 			}
 		}
