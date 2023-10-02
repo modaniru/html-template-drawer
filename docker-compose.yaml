@@ -20,6 +20,9 @@ services:
       - html-template
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/srv
+      - caddy_data:/data
+      - caddy_config:/config
     restart: always
   postgres:
     image: "postgres:latest"
