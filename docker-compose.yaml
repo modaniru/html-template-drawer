@@ -6,6 +6,9 @@ services:
     restart: always
     depends_on:
       - postgres
+    environment:
+      - SECRET=${SECRET}
+      - DB_SOURSE=${DB_SOURCE}
     volumes:
       - ./resources:/app/resources
   caddy:
