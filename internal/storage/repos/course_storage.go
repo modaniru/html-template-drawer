@@ -53,3 +53,17 @@ func (c *courseStorage) SaveCourse(ctx context.Context, course *entity.SaveCours
 	}
 	return id, nil
 }
+
+// Delete course by id
+func (c *courseStorage) DeleteCourse(ctx context.Context, courseId string) error {
+	query := "delete from Courses where id = $1::uuid;"
+	stmt, err := c.db.Prepare(query)
+	if err != nil {
+		return fmt.Errorf("prepare query error: %w", err)
+	}
+	_, err = stmt.ExecContext(ctx, courseId)
+	if err != nil {
+		return fmt.Errorf("execute query error: %w", err)
+	}
+	return nil
+}

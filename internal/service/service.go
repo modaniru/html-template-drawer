@@ -9,6 +9,7 @@ import (
 )
 
 type CourseService interface {
+	DeleteCourse(ctx context.Context, courseId string) error
 	GetAllCourses(ctx context.Context) ([]entity.Course, error)
 	SaveCourse(ctx context.Context, course entity.CourseForm) (string, error)
 }
@@ -16,6 +17,7 @@ type CourseService interface {
 type ArticleService interface {
 	GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error)
 	SaveArticle(ctx context.Context, article entity.ArticleForm) error
+	DeleteById(ctx context.Context, articleId string) error
 }
 
 type Service struct {

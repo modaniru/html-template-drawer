@@ -13,9 +13,11 @@ import (
 type Articles interface {
 	GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error)
 	SaveArticle(ctx context.Context, article entity.ArticleForm) error
+	DeleteById(ctx context.Context, articleId string) error
 }
 
 type Courses interface {
+	DeleteCourse(ctx context.Context, courseId string) error
 	GetAllCourses(ctx context.Context) ([]entity.Course, error)
 	SaveCourse(ctx context.Context, course *entity.SaveCourse) (string, error)
 }
@@ -40,7 +42,7 @@ func NewStorage(db *sql.DB) *Storage {
 		id uuid DEFAULT uuid_generate_v4() unique primary key,
 		template_name varchar,
 		title varchar,
-		course_id uuid REFERENCES Courses (id),
+		course_id uuid REFERENCES Courses (id) on delete cascade,
 		unique(template_name, course_id)
 	);`)
 	if err != nil {

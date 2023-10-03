@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/courses.css">
+    <title>Document</title>
+</head>
+
+
+<body>
+    <ul>
+        <span>{{.status}}</span>
+        {{ range $val := .List }}
+        <li class="line">
+            <a href="/admin/course/?id={{$val.TitleId}}&key={{$.Key}}" class="course_link line">
+                <img class="course-img" src="{{ $val.Image }}" alt="img">
+                <span class="title">{{$val.Title}}</span>
+                
+            </a>
+            <span class="articles">к-во статей: {{$val.ArticlesCount}}</span>
+            <form action="/admin/course/delete?id={{$val.Id}}&key={{$.Key}}" method="post">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {{ end }}
+    </ul>
+</body>
+</html>

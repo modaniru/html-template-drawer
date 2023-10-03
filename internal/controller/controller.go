@@ -23,12 +23,12 @@ func (r *Router) courseFormSubmit(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	id, err := r.service.CourseService.SaveCourse(c, entity.CourseForm{Name: c.PostForm("name"), Image: imageLink})
+	_, err := r.service.CourseService.SaveCourse(c, entity.CourseForm{Name: c.PostForm("name"), Image: imageLink})
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(200, "success: "+id)
+	c.Redirect(301, "/admin/course/create?key="+c.Query("key"))
 }
 
 func (r *Router) articleForm(c *gin.Context) {
@@ -54,7 +54,7 @@ func (r *Router) articleFormSubmit(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	c.JSON(200, "success")
+	c.Redirect(301, fmt.Sprintf("/admin/article/create?key=%s", c.Query("key")))
 }
 
 func (r *Router) loadHtmlPageById() gin.HandlerFunc {
@@ -104,4 +104,56 @@ func (r *Router) coursesList(c *gin.Context) {
 		return
 	}
 	c.HTML(200, "s_courses.html", list)
+}
+
+func (r *Router) adminCourseList(c *gin.Context) {
+	list, err := r.service.CourseService.GetAllCourses(c)
+	fmt.Println(list)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	c.HTML(200, "s_admin_courses.html", map[string]any{
+		"List": list,
+		"Key":  c.Query("key"),
+	})
+}
+
+func (r *Router) deleteCourse(c *gin.Context) {
+	courseId := c.Query("id")
+	err := r.service.CourseService.DeleteCourse(c, courseId)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	c.Redirect(301, fmt.Sprintf("/admin/list?key=%s", c.Query("key")))
+}
+
+func (r *Router) adminArticleList(c *gin.Context) {
+	courseId := c.Query("id")
+	fmt.Println(courseId)
+	if courseId == "" {
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("course id is not present"))
+		return
+	}
+	list, err := r.service.ArticleService.GetCourseArticles(c, courseId)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	c.HTML(200, "s_admin_articles.html", map[string]any{
+		"List":    list,
+		"Key":     c.Query("key"),
+		"TitleId": c.Query("id"),
+	})
+}
+
+func (r *Router) deleteArticle(c *gin.Context) {
+	articleId := c.Query("id")
+	err := r.service.ArticleService.DeleteById(c, articleId)
+	if err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	c.Redirect(301, fmt.Sprintf("/admin/course?id=%s&key=%s", c.Query("course"), c.Query("key")))
 }

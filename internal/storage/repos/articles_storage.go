@@ -18,7 +18,7 @@ func NewArticleStorage(db *sql.DB) *articleStorage {
 
 // Return course articles
 func (a *articleStorage) GetCourseArticles(ctx context.Context, courseId string) ([]entity.Article, error) {
-	rows, err := a.db.QueryContext(ctx, "select template_name, title  from Articles where course_id::uuid = (select id from Courses where title_id = $1);", courseId)
+	rows, err := a.db.QueryContext(ctx, "select id, template_name, title, course_id  from Articles where course_id::uuid = (select id from Courses where title_id = $1);", courseId)
 	if err != nil {
 		return nil, fmt.Errorf("execute query error: %w", err)
 	}
@@ -27,7 +27,7 @@ func (a *articleStorage) GetCourseArticles(ctx context.Context, courseId string)
 	articles := []entity.Article{}
 	for rows.Next() {
 		article := entity.Article{}
-		err := rows.Scan(&article.TemplateName, &article.Title)
+		err := rows.Scan(&article.Id, &article.TemplateName, &article.Title, &article.Course)
 		if err != nil {
 			return nil, fmt.Errorf("scan query error: %w", err)
 		}
@@ -44,4 +44,17 @@ func (a *articleStorage) SaveArticle(ctx context.Context, article entity.Article
 		return fmt.Errorf("execute query error: %w", err)
 	}
 	return err
+}
+
+func (a *articleStorage) DeleteById(ctx context.Context, articleId string) error {
+	query := "delete from Articles where id = $1::uuid;"
+	stmt, err := a.db.Prepare(query)
+	if err != nil {
+		return fmt.Errorf("prepare query error: %w", err)
+	}
+	_, err = stmt.ExecContext(ctx, articleId)
+	if err != nil {
+		return fmt.Errorf("execute query error: %w", err)
+	}
+	return nil
 }

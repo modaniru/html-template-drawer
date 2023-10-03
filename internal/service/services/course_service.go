@@ -35,6 +35,14 @@ func (c *CourseService) SaveCourse(ctx context.Context, course entity.CourseForm
 	return courseId, nil
 }
 
+func (c *CourseService) DeleteCourse(ctx context.Context, courseId string) error {
+	err := c.courseStorage.DeleteCourse(ctx, courseId)
+	if err != nil {
+		return fmt.Errorf("delete course error: %w", err)
+	}
+	return nil
+}
+
 func toTitleId(title string) string {
 	result := strings.ToLower(title)
 	result = strings.ReplaceAll(result, " ", "_")

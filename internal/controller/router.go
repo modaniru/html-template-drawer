@@ -25,18 +25,28 @@ func (r *Router) GetRouter() *gin.Engine {
 	r.router.Static("js", "./resources/js")
 	r.router.Static("fonts", "./resources/fonts")
 	// log middleware
+	r.router.Use(func(ctx *gin.Context) {
+		ctx.Header("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
+		ctx.Header("Expires", "Sat, 26 Jul 1997 05:00:00 GMT")
+	})
 	r.router.Use(middleware.JsonLoggerMiddleware())
 	r.router.Use(middleware.ErrorHandler)
 	// routing
-	g := r.router.Group("/", middleware.Permission)
+
 	r.router.GET("/", r.mainPage)
 	r.router.GET("/article", r.loadHtmlPageById())
-	g.GET("/article/create", r.articleForm)
-	g.POST("/article", r.articleFormSubmit)
 	r.router.GET("/course", r.courseArticles)
 	r.router.GET("/list", r.coursesList)
+
+	g := r.router.Group("/admin", middleware.Permission)
+	g.GET("/article/create", r.articleForm)
+	g.POST("/article", r.articleFormSubmit)
 	g.GET("/course/create", r.courseForm)
 	g.POST("/course", r.courseFormSubmit)
+	g.GET("/list", r.adminCourseList)
+	g.POST("/course/delete", r.deleteCourse)
+	g.GET("/course", r.adminArticleList)
+	g.POST("/article/delete", r.deleteArticle)
 
 	return r.router
 }
